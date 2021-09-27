@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 import os
 
@@ -28,7 +29,12 @@ def form_get(request: Request, stub: str = Form(...)):
     print(result)
     stubs.append(result)
 
-    return templates.TemplateResponse('form.html', context={'request': request, 'result': result})
+    return RedirectResponse("/end", status_code=302)
+
+
+@app.get("/end", response_class=HTMLResponse)
+async def end(request: Request):
+    return templates.TemplateResponse('form.html', context={'request': request, 'result': "완료"})
 
 
 @app.get("/discord")
