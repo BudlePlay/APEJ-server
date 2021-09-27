@@ -27,7 +27,7 @@ def form_post(request: Request, stub: str = Form(...)):
     return templates.TemplateResponse('form.html', context={'request': request, 'result': result})
 
 
-@app.post("/discord")
+@app.get("/discord")
 def form_post(request: Request):
     if len(stubs) > 0:
         return {"flag": "success", "stub": stubs.pop(0)}
