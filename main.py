@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+import threading
 
 import os
 
@@ -16,6 +17,16 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 stubs = []
+ips = set()
+prev_ip = ""
+
+
+def startTimer():
+    global prev_ip
+    prev_ip = ""
+    print("도배 풀림")
+
+
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -25,9 +36,22 @@ async def read_item(request: Request):
 
 @app.post("/send")
 def form_get(request: Request, stub: str = Form(...)):
+    global prev_ip
+
     result = stub
-    print(result)
-    stubs.append(result)
+    print(result, request.client.host)
+
+    ips.add(request.client.host)
+
+    if request.client.host != prev_ip:
+        stubs.append(result)
+    else:
+        print('도배 의심', request.client.host)
+        timer = threading.Timer(60, startTimer)
+        timer.start()
+        print(timer.is_alive())
+
+    prev_ip = request.client.host
 
     return RedirectResponse("/end", status_code=302)
 
