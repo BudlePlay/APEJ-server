@@ -4,6 +4,10 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+import os
+
+# os.chdir("/src/")
+
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -18,8 +22,8 @@ async def read_item(request: Request):
     return templates.TemplateResponse("item.html", {"request": request})
 
 
-@app.post("/")
-def form_post(request: Request, stub: str = Form(...)):
+@app.post("/send")
+def form_get(request: Request, stub: str = Form(...)):
     result = stub
     print(result)
     stubs.append(result)
@@ -28,7 +32,7 @@ def form_post(request: Request, stub: str = Form(...)):
 
 
 @app.get("/discord")
-def form_post(request: Request):
+def form_post():
     if len(stubs) > 0:
         return {"flag": "success", "stub": stubs.pop(0)}
     else:
