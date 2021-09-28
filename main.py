@@ -17,7 +17,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 stubs = []
-ips = set()
 prev_ip = ""
 
 
@@ -41,12 +40,11 @@ def form_get(request: Request, stub: str = Form(...)):
     result = stub
     print(result, request.client.host)
 
-    ips.add(request.client.host)
 
     if request.client.host != prev_ip:
         stubs.append(result)
     else:
-        print('도배 의심', request.client.host)
+        print('도배 의심')
         timer = threading.Timer(60, startTimer)
         timer.start()
         print(timer.is_alive())
